@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Single-Player API</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        .result { margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
+        .success { background: #e8f5e9; }
+        .error { background: #ffebee; }
+        pre { background: #f5f5f5; padding: 10px; overflow: auto; }
+    </style>
+</head>
+<body>
+    <h1>Test Single-Player API</h1>
+    
+    <button onclick="testCreateGame()">1. Crear Juego</button>
+    <button onclick="testMakeMove()">2. Hacer Movimiento</button>
+    <button onclick="testReset()">3. Resetear Ronda</button>
+    <button onclick="testResetMatch()">4. Resetear Match</button>
+    
+    <div id="result" class="result" style="display:none;"></div>
+
+    <script>
+        let currentGameId = null;
+
+        function showResult(data, isError = false) {
+            const el = document.getElementById('result');
+            el.className = 'result ' + (isError ? 'error' : 'success');
+            el.innerHTML = '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            el.style.display = 'block';
+        }
+
+        async function testCreateGame() {
+            try {
+                const response = await fetch('/api/single-player/game', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (!response.ok) {
+                    const error = await response.text();
+                    showResult({ error, status: response.status }, true);
+                    return;
+                }
+
+                const data = await response.json();
+                currentGameId = data.gameId;
+                showResult(data);
+                console.log('Game created:', currentGameId);
+            } catch (error) {
+                showResult({ error: error.message }, true);
+            }
+        }
+
+        async function testMakeMove() {
+            if (!currentGameId) {
+                alert('Primero crea un juego!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/single-player/${currentGameId}/move`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ position: [0, 0] })
+                });
+                
+                if (!response.ok) {
+                    const error = await response.text();
+                    showResult({ error, status: response.status }, true);
+                    return;
+                }
+
+                const data = await response.json();
+                showResult(data);
+            } catch (error) {
+                showResult({ error: error.message }, true);
+            }
+        }
+
+        async function testReset() {
+            if (!currentGameId) {
+                alert('Primero crea un juego!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/single-player/${currentGameId}/reset`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (!response.ok) {
+                    const error = await response.text();
+                    showResult({ error, status: response.status }, true);
+                    return;
+                }
+
+                const data = await response.json();
+                showResult(data);
+            } catch (error) {
+                showResult({ error: error.message }, true);
+            }
+        }
+
+        async function testResetMatch() {
+            if (!currentGameId) {
+                alert('Primero crea un juego!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/single-player/${currentGameId}/reset-match`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (!response.ok) {
+                    const error = await response.text();
+                    showResult({ error, status: response.status }, true);
+                    return;
+                }
+
+                const data = await response.json();
+                showResult(data);
+            } catch (error) {
+                showResult({ error: error.message }, true);
+            }
+        }
+
+        // Test connection on load
+        window.onload = async () => {
+            console.log('Testing connection to server...');
+            try {
+                const response = await fetch('/leaderboard');
+                if (response.ok) {
+                    console.log('✓ Server is running!');
+                    document.body.innerHTML += '<p style="color: green;"><b>✓ Servidor conectado</b></p>';
+                }
+            } catch (e) {
+                console.error('✗ Server not running:', e);
+                document.body.innerHTML += '<p style="color: red;"><b>✗ Servidor NO conectado - Asegúrate de ejecutar: python -m uvicorn server.main:app --reload</b></p>';
+            }
+        };
+    </script>
+</body>
+</html>

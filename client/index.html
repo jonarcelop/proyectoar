@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Triqui - Cliente Web</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Triqui Online</h1>
+
+    <!-- Selector de modo de juego -->
+    <div class="mode-selector">
+        <button id="modeMultiplayer" class="mode-btn active">Multijugador</button>
+        <button id="modeSinglePlayer" class="mode-btn">Single-Player (IA)</button>
+    </div>
+
+    <!-- Conexión Multijugador -->
+    <div id="multiplayerBox" class="connection-box">
+        <h2>Modo Multijugador</h2>
+        <label>Nombre:</label>
+        <input id="name" type="text" placeholder="Tu nombre" value="Jugador">
+
+        <label>playerId:</label>
+        <input id="playerId" type="text" placeholder="(se generará automáticamente)">
+
+        <button id="connectBtn">Conectar (Join)</button>
+        <button id="resumeBtn">Reconectar (Resume)</button>
+
+        <p id="status"></p>
+    </div>
+
+    <!-- Modo Single-Player -->
+    <div id="singlePlayerBox" class="connection-box hidden">
+        <h2>Modo Single-Player</h2>
+        <p>Juega contra la IA Minimax (muy difícil)</p>
+        <button id="startSinglePlayerBtn">Iniciar Juego vs IA</button>
+        <select id="difficultySelect">
+            <option value="hard">Dificultad: Difícil</option>
+            <option value="medium">Dificultad: Media</option>
+            <option value="easy">Dificultad: Fácil</option>
+        </select>
+        <p id="spStatus"></p>
+    </div>
+
+    <div id="gameContainer" class="hidden">
+
+        <h2 id="turnInfo">Esperando...</h2>
+
+        <div id="board" class="board"></div>
+
+        <div class="messages">
+            <p id="gameMessage"></p>
+        </div>
+        
+        <div class="chat-section" id="chatSection">
+            <h3>Chat</h3>
+            <div id="chatBox" class="chat-box"></div>
+            <div class="chat-input-box">
+                <input id="chatInput" type="text" placeholder="Escribe un mensaje..." />
+                <button id="sendChatBtn">Enviar</button>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button id="resetMatchBtn" class="hidden">Reiniciar Serie (best-of)</button>
+        </div>
+
+    </div>
+
+    <div class="log-box">
+        <h3>Registro</h3>
+        <div id="log"></div>
+    </div>
+
+</div>
+
+<script src="js/ui.js"></script>
+<script src="js/sp.js"></script>
+<script src="js/ws.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>

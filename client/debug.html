@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Single-Player</title>
+    <style>
+        body { font-family: Arial; margin: 20px; background: #f5f5f5; }
+        .test { margin: 10px 0; padding: 10px; background: white; border: 1px solid #ddd; }
+        button { padding: 8px 16px; cursor: pointer; }
+        .success { color: green; }
+        .error { color: red; }
+        .result { margin-top: 10px; padding: 10px; background: #e8f5e9; border-left: 4px solid green; }
+        .error-result { background: #ffebee; border-left-color: red; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Debug Single-Player API</h1>
+    
+    <div class="test">
+        <h3>Test 1: Crear Juego</h3>
+        <button onclick="testCreateGame()">Crear Juego</button>
+        <div id="test1-result"></div>
+    </div>
+
+    <div class="test">
+        <h3>Test 2: Ver Leaderboard</h3>
+        <button onclick="testLeaderboard()">Ver Leaderboard</button>
+        <div id="test2-result"></div>
+    </div>
+
+    <div class="test">
+        <h3>Test 3: Console Log</h3>
+        <p>Abre F12 y revisa la consola para ver los logs</p>
+        <button onclick="testConsole()">Test Console</button>
+    </div>
+
+    <script>
+        async function testCreateGame() {
+            const result = document.getElementById('test1-result');
+            result.innerHTML = '<p>Cargando...</p>';
+            
+            try {
+                console.log("🔍 Intentando crear juego en /api/single-player/game");
+                const response = await fetch("/api/single-player/game", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" }
+                });
+                
+                console.log("📊 Response status:", response.status);
+                const data = await response.json();
+                console.log("📦 Response data:", data);
+                
+                if (response.ok) {
+                    result.innerHTML = `<div class="result"><span class="success">✅ SUCCESS</span><pre>${JSON.stringify(data, null, 2)}</pre></div>`;
+                } else {
+                    result.innerHTML = `<div class="result error-result"><span class="error">❌ ERROR</span><pre>${JSON.stringify(data, null, 2)}</pre></div>`;
+                }
+            } catch (error) {
+                console.error("❌ Error:", error);
+                result.innerHTML = `<div class="result error-result"><span class="error">❌ ${error.message}</span></div>`;
+            }
+        }
+
+        async function testLeaderboard() {
+            const result = document.getElementById('test2-result');
+            result.innerHTML = '<p>Cargando...</p>';
+            
+            try {
+                console.log("🔍 Intentando obtener leaderboard");
+                const response = await fetch("/leaderboard");
+                
+                console.log("📊 Response status:", response.status);
+                const data = await response.json();
+                console.log("📦 Response data:", data);
+                
+                result.innerHTML = `<div class="result"><pre>${JSON.stringify(data, null, 2)}</pre></div>`;
+            } catch (error) {
+                console.error("❌ Error:", error);
+                result.innerHTML = `<div class="result error-result"><span class="error">❌ ${error.message}</span></div>`;
+            }
+        }
+
+        function testConsole() {
+            console.log("✅ Console está funcionando");
+            console.log("📍 URL actual:", window.location.href);
+            console.log("🔗 Intentando conectar a: http://localhost:8000");
+        }
+
+        // Test automático al cargar
+        window.addEventListener('load', () => {
+            console.log("🚀 Página cargada");
+            console.log("📍 Hostname:", window.location.hostname);
+            console.log("🔗 Trying /api/single-player/game endpoint...");
+        });
+    </script>
+</body>
+</html>
